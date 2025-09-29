@@ -128,6 +128,41 @@ ORDER BY total_revenue DESC;
  I used ROW_NUMBER(), RANK(), DENSE_RANK(), and PERCENT_RANK() to rank customers and easily spot the top ones by revenue. Arina Airlines needed to find its highest-revenue customers for loyalty tiers, premium services, and retention plans.
 
 **2. Aggregate: SUM(), AVG(), MIN(), MAX() with frame comparisons (ROWS vs RANGE) 
+```
+SELECT 
+    TO_CHAR(month_start, 'YYYY-MM') AS month_year,
+    monthly_revenue,
+    avg_fare,
+    min_fare,
+    max_fare,
+    SUM(monthly_revenue) OVER (
+        ORDER BY month_start
+        ROWS UNBOUNDED PRECEDING
+    ) AS running_total_rows,
+    ROUND(AVG(monthly_revenue) OVER (
+        ORDER BY month_start
+        ROWS BETWEEN 1 PRECEDING AND CURRENT ROW
+    ), 2) AS moving_avg_rows,
+    SUM(monthly_revenue) OVER (
+        ORDER BY month_start
+        RANGE UNBOUNDED PRECEDING
+    ) AS running_total_range,
+    ROUND(AVG(monthly_revenue) OVER (
+        ORDER BY month_start
+        RANGE BETWEEN INTERVAL '1' MONTH PRECEDING AND CURRENT ROW
+    ), 2) AS moving_avg_range
+FROM (
+    SELECT 
+        TRUNC(booking_date, 'MM') AS month_start,
+        SUM(fare_paid) AS monthly_revenue,
+        ROUND(AVG(fare_paid), 2) AS avg_fare,
+        MIN(fare_paid) AS min_fare,
+        MAX(fare_paid) AS max_fare
+    FROM bookings
+    GROUP BY TRUNC(booking_date, 'MM')
+) t
+ORDER BY month_start;
+```
 
 
 <img width="1894" height="862" alt="aggregate1" src="https://github.com/user-attachments/assets/2157bcf8-94e1-4499-81cb-6d220431e67b" />
