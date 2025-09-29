@@ -97,7 +97,11 @@ we cant forget that I also created an ER diagram to show how the tables are conn
 ## Step 4: Window Functions Implementation 
 
 **1. Ranking: Ranking: ROW_NUMBER(), RANK(), DENSE_RANK(), PERCENT_RANK() 
-```SELECT 
+```
+//-- ranking functions: ROW_NUMBER() gives unique sequence, RANK() gives rank with gaps,
+//DENSE_RANK() gives rank without gaps, and PERCENT_RANK() gives relative percentile.
+
+SELECT 
     customer_id,
     customer_name,
     total_revenue,
@@ -129,6 +133,9 @@ ORDER BY total_revenue DESC;
 
 **2. Aggregate: SUM(), AVG(), MIN(), MAX() with frame comparisons (ROWS vs RANGE) 
 ```
+//-- Aggregate functions with window frames: SUM(), AVG(), MIN(),
+//MAX() compared using ROWS (physical row count) vs RANGE (value-based range).
+
 SELECT 
     TO_CHAR(month_start, 'YYYY-MM') AS month_year,
     monthly_revenue,
@@ -177,6 +184,8 @@ In Arina Airline,ROWS helps show transaction patterns, while RANGE reveals trend
 **3. Navigation: LAG(), LEAD(), growth % calculations
 
 ```
+//-- Navigation functions: LAG() and LEAD() to access previous/next row values,
+
 SELECT 
     TO_CHAR(booking_date, 'YYYY-MM') AS month_year,
     COUNT(booking_id) AS current_month_bookings,
@@ -210,6 +219,8 @@ In Arina Airlines, they used LAG() and LEAD() along with growth percentage calcu
 
 **4. Distribution: NTILE(4), CUME_DIST()
 ```
+//-- Distribution functions: NTILE(4) splits rows into 4 buckets, 
+//CUME_DIST() gives cumulative distribution up to current row.
 
 SELECT 
     customer_id,
